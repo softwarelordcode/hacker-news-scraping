@@ -2,6 +2,7 @@
 A simple web scraper to fetch titles and points from Hacker News.
 '''
 
+import pprint
 import requests
 from bs4 import BeautifulSoup
 
@@ -29,7 +30,7 @@ def main():
 
     custom_hn = create_custom_hn(links, subtexts)
 
-    print(custom_hn)
+    pprint.pp(custom_hn)
 
 if __name__ == '__main__':
     main()
