@@ -1,8 +1,9 @@
 '''
 A simple web scraper to fetch titles and points from Hacker News.
 '''
-
+import sys
 import pprint
+import time
 import requests
 from bs4 import BeautifulSoup
 
@@ -28,18 +29,42 @@ def create_custom_hn(links, subtexts):
 
     return sort_stories_by_points(hn)
 
-def main():
+def main(args):
     '''
     Main function to scrape Hacker News.
     '''
-    res = requests.get('https://news.ycombinator.com', timeout=5)
-    soup = BeautifulSoup(res.text, 'html.parser')
-    links = soup.select('.athing.submission .title .titleline > a')
-    subtexts = soup.select('.subtext')
 
-    custom_hn = create_custom_hn(links, subtexts)
+    try:
+        if len(args) > 1 and args[1] == '-p':
+            pages_num = int(args[2])
+        else:
+            pages_num = 1
+    except IndexError:
+        print("Usage: python stamp_my_pdf.py")
+        print("or")
+        print("Usage: python stamp_my_pdf.py -p <pages>")
+        print("Example: python hn_scraping.py -p 1")
+        sys.exit(1)
+    except ValueError:
+        print("Invalid number of pages. Please provide a valid integer.")
+        sys.exit(1)
+
+    pages = [f'https://news.ycombinator.com/news?p={i}' for i in range(1, pages_num + 1)]
+
+    custom_hn = []
+
+    for page in pages:
+        res = requests.get(page, timeout=5)
+        time.sleep(2)
+
+        soup = BeautifulSoup(res.text, 'html.parser')
+
+        links = soup.select('.athing.submission .title .titleline > a')
+        subtexts = soup.select('.subtext')
+
+        custom_hn.extend(create_custom_hn(links, subtexts))
 
     pprint.pp(custom_hn)
 
 if __name__ == '__main__':
-    main()
+    main(sys.argv)
