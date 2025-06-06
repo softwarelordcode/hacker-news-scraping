@@ -6,6 +6,12 @@ import pprint
 import requests
 from bs4 import BeautifulSoup
 
+def sort_stories_by_points(hn):
+    '''
+    Sort the Hacker News stories by points in descending order.
+    '''
+    return sorted(hn, key=lambda x: x['points'], reverse=True)
+
 def create_custom_hn(links, subtexts):
     '''
     Create a custom Hacker News object with title and points.
@@ -14,10 +20,13 @@ def create_custom_hn(links, subtexts):
     for link, subtext in zip(links, subtexts):
         title = link.getText()
         href = link.get('href', None)
-        points = (subtext.find('span', class_='score').getText(
-        ) if subtext.find('span', class_='score') else '0 points').removesuffix(' points')
-        hn.append({'title': title, 'href': href, 'points': points})
-    return hn
+        points = int((subtext.find('span', class_='score').getText(
+        ) if subtext.find('span', class_='score') else '0 points').removesuffix(' points'))
+
+        if points > 99:
+            hn.append({'title': title, 'href': href, 'points': points})
+
+    return sort_stories_by_points(hn)
 
 def main():
     '''
