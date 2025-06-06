@@ -40,9 +40,9 @@ def main(args):
         else:
             pages_num = 1
     except IndexError:
-        print("Usage: python stamp_my_pdf.py")
+        print("Usage: python hn_scraping.py")
         print("or")
-        print("Usage: python stamp_my_pdf.py -p <pages>")
+        print("Usage: python hn_scraping.py -p <pages>")
         print("Example: python hn_scraping.py -p 1")
         sys.exit(1)
     except ValueError:
