@@ -9,10 +9,14 @@ def create_custom_hn(links, subtexts):
     '''
     Create a custom Hacker News object with title and points.
     '''
+    hn = []
     for link, subtext in zip(links, subtexts):
-        points = subtext.find('span', class_='score').getText(
-        ) if subtext.find('span', class_='score') else '0 points'
-        print(link.getText(), points)
+        title = link.getText()
+        href = link.get('href', None)
+        points = (subtext.find('span', class_='score').getText(
+        ) if subtext.find('span', class_='score') else '0 points').removesuffix(' points')
+        hn.append({'title': title, 'href': href, 'points': points})
+    return hn
 
 def main():
     '''
@@ -23,7 +27,9 @@ def main():
     links = soup.select('.athing.submission .title .titleline > a')
     subtexts = soup.select('.subtext')
 
-    create_custom_hn(links, subtexts)
+    custom_hn = create_custom_hn(links, subtexts)
+
+    print(custom_hn)
 
 if __name__ == '__main__':
     main()
